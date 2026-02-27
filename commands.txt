@@ -1,0 +1,75 @@
+==============================
+LAB 5 - EC2 + RDS DEPLOYMENT
+Spring Boot RealWorld API
+==============================
+
+1. EC2 SETUP
+--------------------------------
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+sudo apt install nginx -y
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+2. CLONE PROJECT
+--------------------------------
+git clone https://github.com/gothinkster/spring-boot-realworld-example-app.git
+cd spring-boot-realworld-example-app
+
+3. BUILD APPLICATION
+--------------------------------
+./gradlew build -x test -x spotlessCheck -x spotlessJava
+
+4. RUN APPLICATION (Manual)
+--------------------------------
+java -jar build/libs/spring-boot-realworld-example-app-0.0.1-SNAPSHOT.jar
+
+5. CREATE SYSTEMD SERVICE
+--------------------------------
+sudo nano /etc/systemd/system/realworld.service
+
+sudo systemctl daemon-reload
+sudo systemctl enable realworld
+sudo systemctl start realworld
+sudo systemctl status realworld
+
+6. CONFIGURE NGINX
+--------------------------------
+sudo nano /etc/nginx/sites-available/default
+
+sudo systemctl restart nginx
+
+7. RDS CONNECTION
+--------------------------------
+mysql -h <RDS-ENDPOINT> -u admin -p
+USE realworlddb;
+SHOW TABLES;
+
+8. CRUD COMMANDS
+--------------------------------
+
+# CREATE USER
+curl -X POST http://<EC2-IP>/users \
+-H "Content-Type: application/json" \
+-d '{"username":"saad","email":"saad@example.com","password":"password123"}'
+
+# LOGIN
+curl -X POST http://<EC2-IP>/users/login \
+-H "Content-Type: application/json" \
+-d '{"email":"saad@example.com","password":"password123"}'
+
+# UPDATE USER
+curl -X PUT http://<EC2-IP>/user \
+-H "Authorization: Token <JWT_TOKEN>" \
+-H "Content-Type: application/json" \
+-d '{"bio":"Cloud Engineer"}'
+
+# CREATE ARTICLE
+curl -X POST http://<EC2-IP>/articles \
+-H "Authorization: Token <JWT_TOKEN>" \
+-H "Content-Type: application/json" \
+-d '{"title":"AWS Lab","description":"Testing CRUD","body":"Hello AWS","tagList":["aws"]}'
+
+# DELETE ARTICLE
+curl -X DELETE http://<EC2-IP>/articles/aws-lab \
+-H "Authorization: Token <JWT_TOKEN>"
