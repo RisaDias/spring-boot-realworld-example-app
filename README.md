@@ -1,8 +1,5 @@
 #  Lab 5 – EC2 Application Connected to Amazon RDS (MySQL)
 
-
-**EC2 Public URL:** http://43.205.199.5  
-
 # Project Overview
 
 This project demonstrates deployment of the Spring Boot RealWorld API on an AWS EC2 instance and secure integration with Amazon RDS MySQL.
