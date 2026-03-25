@@ -1,15 +1,9 @@
-# 📌 Lab 5 – EC2 Application Connected to Amazon RDS (MySQL)
+#  Lab 5 – EC2 Application Connected to Amazon RDS (MySQL)
 
-## 👨‍🎓 Student Details
-**Name:** Saad Dalvi  
-**Course:** Cloud Computing Lab  
-**Application:** Spring Boot RealWorld API  
-**Database:** Amazon RDS MySQL  
+
 **EC2 Public URL:** http://43.205.199.5  
 
----
-
-# 📖 Project Overview
+# Project Overview
 
 This project demonstrates deployment of the Spring Boot RealWorld API on an AWS EC2 instance and secure integration with Amazon RDS MySQL.
 
@@ -21,9 +15,8 @@ Objectives of this lab:
 - Demonstrate all CRUD operations
 - Follow proper AWS security best practices
 
----
 
-# 🏗 Architecture
+# Architecture
 
 User (curl/Postman/Browser)  
 ↓  
@@ -37,34 +30,30 @@ Spring Boot Application (Port 8080)
 ↓  
 Amazon RDS MySQL  
 
----
 
-# 🔐 Security Configuration
+# Security Configuration
 
 ## EC2 Security Group
-- Port 22 (SSH) → My IP only  
-- Port 80 (HTTP) → 0.0.0.0/0  
-- Port 8080 → Not publicly exposed  
+- Port 22 (SSH) : My IP only  
+- Port 80 (HTTP) : 0.0.0.0/0  
 
 ## RDS Security Group
 - Port 3306 (MySQL)  
-- Source → EC2 Security Group only  
-- Public Access → Disabled  
+- Source : EC2 Security Group only  
+- Public Access : Disabled  
 
 This ensures the database is not accessible from the internet.
 
----
 
-# ⚙ Deployment Steps
+# Deployment Steps
 
-## 1️⃣ Launch EC2
+##  Launch EC2
 - OS: Ubuntu 24.04
 - Instance Type: t3.small
 - Key pair created and used for SSH
 
----
 
-## 2️⃣ Install Dependencies
+##  Install Dependencies
 
 ```bash
 sudo apt update
@@ -72,9 +61,8 @@ sudo apt install openjdk-17-jdk
 sudo apt install nginx
 ```
 
----
 
-## 3️⃣ Clone and Build Application
+##  Clone and Build Application
 
 ```bash
 git clone https://github.com/gothinkster/spring-boot-realworld-example-app.git
@@ -82,19 +70,19 @@ cd spring-boot-realworld-example-app
 ./gradlew build -x test -x spotlessCheck -x spotlessJava
 ```
 
----
 
-## 4️⃣ Configure Amazon RDS
+
+##  Configure Amazon RDS
 
 - Engine: MySQL  
-- Database Name: realworlddb  
+- Database Name: realworld-db  
 - Port: 3306  
 - Public Access: Disabled  
 - Inbound Rule: Allow MySQL from EC2 Security Group only  
 
 ---
 
-## 5️⃣ Configure Database Connection
+##  Configure Database Connection
 
 `application.properties`
 
@@ -111,96 +99,26 @@ Set environment variable:
 export DB_PASSWORD=yourpassword
 ```
 
----
 
-## 6️⃣ Configure Nginx Reverse Proxy
+# CRUD Operations Demonstrated
 
-```nginx
-server {
-    listen 80;
-    server_name _;
+##  Create
+- Database
+- Table
+- User
 
-    location / {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
+##  Read
+- Specific User 
 
-Restart Nginx:
+##  Update
+- User
 
-```bash
-sudo systemctl restart nginx
-```
+##  Delete
+- User
 
 ---
 
-## 7️⃣ Configure systemd Service
+# Conclusion
 
-```bash
-sudo nano /etc/systemd/system/realworld.service
-sudo systemctl daemon-reload
-sudo systemctl enable realworld
-sudo systemctl start realworld
-```
+The Spring Boot RealWorld API was successfully deployed on EC2 and securely connected to Amazon RDS MySQL. All CRUD operations were demonstrated.
 
-This ensures the application starts automatically on reboot.
-
----
-
-# 🗄 Database Schema
-
-Tables used:
-- users
-- articles
-- tags
-- article_tags
-
-Relationship:
-- articles.author_id → users.id (Foreign Key)
-
----
-
-# 🔁 CRUD Operations Demonstrated
-
-## ✅ Create
-- User registration
-- Article creation with tags
-
-## ✅ Read
-- User login
-- Fetch articles
-- Verified using:
-  ```
-  SELECT * FROM users;
-  SELECT * FROM articles;
-  ```
-
-## ✅ Update
-- Updated user bio using:
-  ```
-  PUT /user
-  ```
-- Verified updated record in RDS.
-
-## ✅ Delete
-- Deleted article using:
-  ```
-  DELETE /articles/{slug}
-  ```
-- Confirmed removal from database.
-
-Application Access
-
-Application hosted at:
-
-http://43.205.199.5/articles
-
----
-
-# ✅ Conclusion
-
-The Spring Boot RealWorld API was successfully deployed on EC2 and securely connected to Amazon RDS MySQL. All CRUD operations were demonstrated and verified through the EC2-hosted application.
-
-Proper AWS security best practices were followed by restricting database access to the EC2 Security Group only.
